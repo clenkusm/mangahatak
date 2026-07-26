@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مانجاهاتك</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+        body { background-color: #f4f6f9; color: #333; display: flex; height: 100vh; overflow: hidden; }
+        .sidebar { width: 260px; background: #2c3e50; color: white; display: flex; flex-direction: column; padding: 20px; position: fixed; right: 0; top: 0; height: 100%; z-index: 100; }
+        .logo-area { display: flex; align-items: center; gap: 10px; margin-bottom: 30px; font-size: 20px; font-weight: bold; }
+        .nav-links { display: flex; flex-direction: column; gap: 10px; }
+        .nav-links a { color: #bdc3c7; text-decoration: none; padding: 12px; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .nav-links a:hover, .nav-links a.active { background: #34495e; color: white; }
+        .main-content { margin-right: 260px; flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; }
+        .top-bar { background: white; padding: 15px 30px; display: flex; justify-content: flex-end; gap: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 90; }
+        .icon-btn { background: #ecf0f1; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; }
+        .page-body { padding: 30px; }
+        .hero { background: linear-gradient(135deg, #3498db, #2c3e50); color: white; padding: 40px; border-radius: 15px; text-align: center; margin-bottom: 30px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; cursor: pointer; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .form-container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); max-width: 650px; margin: auto; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 5px; }
+        .btn-submit { background: #27ae60; color: white; border: none; padding: 12px 20px; width: 100%; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .btn-danger { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .btn-primary { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; }
+        .stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .story-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); padding: 15px; text-align: center; cursor: pointer; }
+        .story-card img { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; }
+        .chat-container { display: flex; height: calc(100vh - 140px); background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .chat-sidebar { width: 300px; border-left: 1px solid #eee; overflow-y: auto; }
+        .chat-main { flex: 1; display: flex; flex-direction: column; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .chat-input-area { padding: 15px; border-top: 1px solid #eee; display: flex; gap: 10px; }
+        .chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 5px; }
+        .msg { padding: 10px 15px; border-radius: 10px; max-width: 60%; }
+        .msg.sent { background: #dcf8c6; align-self: flex-end; }
+        .msg.received { background: white; align-self: flex-start; border: 1px solid #eee; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; display: none; }
+        .modal-content { background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <span>📖</span>
+            <h2>مانجاهاتك</h2>
+        </div>
+        <nav class="nav-links">
+            <a class="active" onclick="switchPage('home', this)"><span>🏠</span> الصفحة الرئيسية</a>
+            <a onclick="switchPage('search', this)"><span>🔍</span> البحث</a>
+            <a onclick="switchPage('topRated', this)"><span>⭐</span> الأعلى تقييما</a>
+            <a onclick="switchPage('chat', this)"><span>💬</span> المحادثات</a>
+            <a onclick="switchPage('addStory', this)"><span>➕</span> اضافة قصة</a>
+            <a onclick="switchPage('account', this)"><span>👤</span> الحساب</a>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <header class="top-bar">
+            <button class="icon-btn" onclick="openNotifications()">🔔 الإشعارات <span id="notifCount" style="color:red;">(0)</span></button>
+            <button class="icon-btn" onclick="openFriends()">👥 الأصدقاء</button>
+        </header>
+
+        <div class="page-body" id="mainView">
+            <!-- المحتوى يتغير ديناميكياً هنا -->
+        </div>
+    </div>
+
+    <!-- نافذة منبثقة عامة -->
+    <div class="modal" id="globalModal">
+        <div class="modal-content" id="modalBody"></div>
+    </div>
+
+    <script>
+        // قاعدة البيانات المؤقتة المحلية للموقع
+        let appData = {
+            currentUser: { name: "مستخدم ضيف", type: "guest", image: "https://via.placeholder.com/80", friends: [], stories: [], favorites: [], uncompleted: [], following: [], read: [] },
+            stories: [
+                { id: 1, title: "رحلة الفانتازيا الكبرى", author: "أحمد محمد", category: "فانتازيا", privacy: "عامة", image: "https://via.placeholder.com/150", text: "هذه قصة خيالية ممتعة...", likes: 120, stars: 4.8, reads: 540, comments: 15 },
+                { id: 2, title: "أسرار الظلام والأكشن", author: "محمود علي", category: "أكشن", privacy: "عامة", image: "https://via.placeholder.com/150", text: "قصة مليئة بالحماس...", likes: 95, stars: 4.2, reads: 320, comments: 8 }
+            ],
+            lists: [],
+            notifications: [],
+            chats: [{ name: "المجموعة العامة", type: "group", messages: [{sender: "أحمد", text: "أهلاً بالجميع!"}] }]
+        };
+
+        // تحميل الصفحة الرئيسية عند البداية
+        window.onload = function() {
+            renderHome();
+        };
+
+        function switchPage(pageName, element) {
+            document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+            if(element) element.classList.add('active');
+
+            const view = document.getElementById('mainView');
+            if(pageName === 'home') renderHome();
+            else if(pageName === 'search') renderSearch();
+            else if(pageName === 'topRated') renderTopRated();
+            else if(pageName === 'chat') renderChat();
+            else if(pageName === 'addStory') renderAddStory();
+            else if(pageName === 'account') renderAccount();
+        }
+
+        // 1. الصفحة الرئيسية
+        function renderHome() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <div class="hero">
+                    <h1>أهلاً بك في مانجاهاتك</h1>
+                    <p>منصتك الأولى لرفع وقراءة أمتع القصص والروايات</p>
+                </div>
+                <div class="cards-grid">
+                    <div class="card" onclick="switchPage('addStory')"><h3>أنشئ كتابك الخاص</h3><p>شارك إبداعك مع العالم</p></div>
+                    <div class="card" onclick="switchPage('search')"><h3>ابحث عن أشهر القصص</h3><p>استكشف ملايين العناوين</p></div>
+                    <div class="card" onclick="switchPage('topRated')"><h3>استمتع بأمتع القصص</h3><p>الأعلى تقييماً وقراءةً</p></div>
+                </div>
+                <h3 style="margin-bottom: 15px;">اقتراحات التصنيفات</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                    <button class="icon-btn" onclick="filterByCategory('فانتازيا')">فانتازيا</button>
+                    <button class="icon-btn" onclick="filterByCategory('أكشن')">أكشن</button>
+                    <button class="icon-btn" onclick="filterByCategory('دراما')">دراما</button>
+                    <button class="icon-btn" onclick="filterByCategory('رومانسي')">رومانسي</button>
+                    <button class="icon-btn" onclick="filterByCategory('تشونين')">تشونين</button>
+                </div>
+                <h3 style="margin-bottom: 15px;">قصص مقترحة لك</h3>
+                <div class="stories-grid" id="homeStoriesGrid"></div>
+            `;
+            renderStoriesList(appData.stories, 'homeStoriesGrid');
+        }
+
+        // 2. صفحة إضافة قصة
+        function renderAddStory() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <div class="form-container">
+                    <h2>اضافة قصة جديدة</h2><br>
+                    <div class="form-group"><label>صورة القصة (إجباري)</label><input type="file" id="stImage"></div>
+                    <div class="form-group"><label>اسم القصة (إجباري)</label><input type="text" id="stName"></div>
+                    <div class="form-group"><label>القصة أو ملف (PDF / Word) (إجباري)</label><textarea rows="4" id="stText" placeholder="اكتب القصة هنا..."></textarea><input type="file" style="margin-top:5px;"></div>
+                    <div class="form-group"><label>التصنيف</label>
+                        <select id="stCat">
+                            <option>فانتازيا</option><option>أكشن</option><option>دراما</option><option>رومانسي</option><option>تشونين</option><option>غموض</option><option>رعب</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>الخصوصية</label>
+                        <select id="stPrivacy">
+                            <option value="عامة">عامة</option><option value="خاصة">خاصة</option><option value="للاصدقاء فقط">للاصدقاء فقط</option>
+                        </select>
+                    </div>
+                    <div class="form-group"><label>اسم القائمة (List) المرتبطة (اختياري)</label><input type="text" id="stList"></div>
+                    <button class="btn-submit" onclick="submitStory()">نشر القصة</button>
+                </div>
+            `;
+        }
+
+        function submitStory() {
+            const name = document.getElementById('stName').value;
+            const text = document.getElementById('stText').value;
+            const cat = document.getElementById('stCat').value;
+            const privacy = document.getElementById('stPrivacy').value;
+            const listName = document.getElementById('stList').value;
+
+            if(!name || !text) {
+                alert("خطأ: يجب ملء جميع الخانات الأساسية (اسم القصة ونصها)!");
+                return;
+            }
+
+            const newStory = {
+                id: appData.stories.length + 1,
+                title: name,
+                author: appData.currentUser.name,
+                category: cat,
+                privacy: privacy,
+                image: "https://via.placeholder.com/150",
+                text: text,
+                likes: 0,
+                stars: 5.0,
+                reads: 1,
+                comments: 0
+            };
+
+            appData.stories.push(newStory);
+            appData.currentUser.stories.push(newStory);
+
+            if(listName) {
+                let existingList = appData.lists.find(l => l.name === listName);
+                if(existingList) {
+                    existingList.stories.push(newStory);
+                } else {
+                    appData.lists.push({ name: listName, image: "https://via.placeholder.com/150", stories: [newStory] });
+                }
+            }
+
+            alert("تم نشر القصة بنجاح!");
+            switchPage('home');
+        }
+
+        // 3. صفحة البحث والفلترة
+        function renderSearch() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <div class="form-container" style="max-width:100%; margin-bottom:20px;">
+                    <input type="text" id="searchInput" placeholder="ابحث عن اسم القصة..." onkeyup="filterStories()" style="padding:15px; font-size:16px;">
+                    <div style="margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="icon-btn" onclick="filterByCatSearch('الكل')">الكل</button>
+                        <button class="icon-btn" onclick="filterByCatSearch('فانتازيا')">فانتازيا</button>
+                        <button class="icon-btn" onclick="filterByCatSearch('أكشن')">أكشن</button>
+                        <button class="icon-btn" onclick="filterByCatSearch('دراما')">دراما</button>
+                        <button class="icon-btn" onclick="filterByCatSearch('رومانسي')">رومانسي</button>
+                        <button class="icon-btn" onclick="filterByCatSearch('تشونين')">تشونين</button>
+                    </div>
+                </div>
+                <div class="stories-grid" id="searchGrid"></div>
+            `;
+            renderStoriesList(appData.stories, 'searchGrid');
+        }
+
+        function filterStories() {
+            let query = document.getElementById('searchInput').value.toLowerCase();
+            let filtered = appData.stories.filter(s => s.title.toLowerCase().includes(query));
+            renderStoriesList(filtered, 'searchGrid');
+        }
+
+        function filterByCatSearch(cat) {
+            if(cat === 'الكل') renderStoriesList(appData.stories, 'searchGrid');
+            else {
+                let filtered = appData.stories.filter(s => s.category === cat);
+                renderStoriesList(filtered, 'searchGrid');
+            }
+        }
+
+        // 4. القصص الأعلى تقييماً
+        function renderTopRated() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <h2>القصص الأعلى تقييماً</h2><br>
+                <div style="margin-bottom:20px; display:flex; gap:10px;">
+                    <button class="icon-btn" onclick="sortTop('likes')">حسب الإعجابات</button>
+                    <button class="icon-btn" onclick="sortTop('stars')">حسب النجوم</button>
+                    <button class="icon-btn" onclick="sortTop('both')">الاثنين معاً</button>
+                </div>
+                <div class="stories-grid" id="topGrid"></div>
+            `;
+            sortTop('both');
+        }
+
+        function sortTop(type) {
+            let sorted = [...appData.stories];
+            if(type === 'likes') sorted.sort((a,b) => b.likes - a.likes);
+            else if(type === 'stars') sorted.sort((a,b) => b.stars - a.stars);
+            else sorted.sort((a,b) => (b.likes * b.stars) - (a.likes * a.stars));
+            renderStoriesList(sorted, 'topGrid');
+        }
+
+        // 5. الحساب الشخصي
+        function renderAccount() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <div style="background:white; padding:20px; border-radius:10px; display:flex; align-items:center; gap:20px; margin-bottom:20px;">
+                    <img src="${appData.currentUser.image}" style="width:80px; height:80px; border-radius:50%; object-fit:cover;">
+                    <div>
+                        <h2>${appData.currentUser.name}</h2>
+                        <p>نوع الحساب: ${appData.currentUser.type}</p>
+                        <button class="btn-primary" style="margin-top:10px;" onclick="editAccountModal()">تعديل الحساب</button>
+                    </div>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">
+                    <button class="icon-btn" onclick="showAccountTab('stories')">قصصي</button>
+                    <button class="icon-btn" onclick="showAccountTab('favorites')">قصص مفضلة</button>
+                    <button class="icon-btn" onclick="showAccountTab('uncompleted')">لم يتم تكملتها</button>
+                    <button class="icon-btn" onclick="showAccountTab('following')">قصص تتابعها</button>
+                    <button class="icon-btn" onclick="showAccountTab('friendsStories')">قصص الاصدقاء</button>
+                    <button class="icon-btn" onclick="showAccountTab('read')">قصص تم قراءتها</button>
+                </div>
+                <div id="accountTabContent"></div>
+            `;
+            showAccountTab('stories');
+        }
+
+        function showAccountTab(tab) {
+            const container = document.getElementById('accountTabContent');
+            if(tab === 'stories') {
+                container.innerHTML = `<h3>قصصي وقوائمي</h3><br><div class="stories-grid" id="accStories"></div>`;
+                renderStoriesList(appData.currentUser.stories, 'accStories');
+            } else if(tab === 'favorites') {
+                container.innerHTML = `<h3>القصص المفضلة</h3><br><div class="stories-grid" id="accFav"></div>`;
+                renderStoriesList(appData.currentUser.favorites, 'accFav');
+            } else if(tab === 'uncompleted') {
+                container.innerHTML = `<h3>قصص لم يتم تكملتها</h3><br><div class="stories-grid" id="accUnc"></div>`;
+                renderStoriesList(appData.currentUser.uncompleted, 'accUnc');
+            } else if(tab === 'read') {
+                container.innerHTML = `<h3>قصص تم قراءتها</h3><br><div class="stories-grid" id="accRead"></div>`;
+                renderStoriesList(appData.currentUser.read, 'accRead');
+            } else {
+                container.innerHTML = `<h3>قائمة فارغة أو قيد التحديث</h3>`;
+            }
+        }
+
+        function editAccountModal() {
+            const modal = document.getElementById('globalModal');
+            const body = document.getElementById('modalBody');
+            modal.style.display = 'flex';
+            body.innerHTML = `
+                <h3>تعديل الحساب</h3><br>
+                <div class="form-group"><label>اسم الحساب الجديد</label><input type="text" id="newName" value="${appData.currentUser.name}"></div>
+                <div class="form-group"><label>تسجيل الدخول عبر:</label>
+                    <select id="loginType">
+                        <option value="guest">ضيف</option>
+                        <option value="google">جوجل</option>
+                        <option value="facebook">فيسبوك</option>
+                    </select>
+                </div>
+                <button class="btn-submit" onclick="saveAccountEdit()">حفظ التعديلات</button>
+                <button class="btn-danger" style="margin-top:10px; width:100%;" onclick="closeModal()">إلغاء</button>
+            `;
+        }
+
+        function saveAccountEdit() {
+            let name = document.getElementById('newName').value;
+            let type = document.getElementById('loginType').value;
+            appData.currentUser.name = name;
+            appData.currentUser.type = type;
+            if(type === 'google') appData.currentUser.image = "https://cdn-icons-png.flaticon.com/512/2991/2991148.png";
+            if(type === 'facebook') appData.currentUser.image = "https://cdn-icons-png.flaticon.com/512/733/733547.png";
+            closeModal();
+            renderAccount();
+        }
+
+        // 6. المحادثات والدردشة
+        function renderChat() {
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <div class="chat-container">
+                    <div class="chat-sidebar">
+                        <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                            <h4>المحادثات</h4>
+                            <button class="icon-btn" onclick="createGroupModal()">+ مجموعة</button>
+                        </div>
+                        <div style="padding:10px; cursor:pointer; background:#eee;" onclick="openChat('المجموعة العامة')">💬 المجموعة العامة</div>
+                    </div>
+                    <div class="chat-main">
+                        <div style="padding:15px; border-bottom:1px solid #eee; font-weight:bold;" id="activeChatTitle">المجموعة العامة</div>
+                        <div class="chat-messages" id="chatMessages"></div>
+                        <div class="chat-input-area">
+                            <input type="text" id="msgInput" placeholder="اكتب رسالتك...">
+                            <button class="btn-primary" onclick="sendMessage()">إرسال</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            loadChatMessages("المجموعة العامة");
+        }
+
+        function loadChatMessages(chatName) {
+            let chat = appData.chats.find(c => c.name === chatName);
+            let container = document.getElementById('chatMessages');
+            container.innerHTML = "";
+            if(chat) {
+                chat.messages.forEach(m => {
+                    container.innerHTML += `<div class="msg received"><b>${m.sender}:</b> ${m.text}</div>`;
+                });
+            }
+        }
+
+        function sendMessage() {
+            let text = document.getElementById('msgInput').value;
+            if(!text) return;
+            appData.chats[0].messages.push({ sender: appData.currentUser.name, text: text });
+            document.getElementById('msgInput').value = "";
+            loadChatMessages("المجموعة العامة");
+        }
+
+        // وظائف مساعدة عامة
+        function renderStoriesList(storiesArray, elementId) {
+            const grid = document.getElementById(elementId);
+            if(!grid) return;
+            grid.innerHTML = "";
+            storiesArray.forEach(story => {
+                grid.innerHTML += `
+                    <div class="story-card" onclick="openStoryDetail(${story.id})">
+                        <img src="${story.image}">
+                        <h4>${story.title}</h4>
+                        <p style="font-size:12px; color:#777;">التصنيف: ${story.category}</p>
+                        <p style="font-size:12px; color:#f39c12;">⭐ ${story.stars} | 👍 ${story.likes}</p>
+                    </div>
+                `;
+            });
+        }
+
+        function openStoryDetail(id) {
+            let story = appData.stories.find(s => s.id === id);
+            const view = document.getElementById('mainView');
+            view.innerHTML = `
+                <button class="icon-btn" onclick="switchPage('home')">⬅ رجوع</button><br><br>
+                <div style="background:white; padding:30px; border-radius:10px;">
+                    <img src="${story.image}" style="width:150px; height:200px; border-radius:8px; float:right; margin-left:20px;">
+                    <h2>${story.title}</h2>
+                    <p style="color:#777; margin:10px 0;">المؤلف: ${story.author} | التصنيف: ${story.category}</p>
+                    <p style="font-size:18px; color:#f39c12; margin-bottom:15px;">⭐ ${story.stars} (5 نجوم) | 👁️ ${story.reads} قراءة</p>
+                    <hr style="margin:15px 0;"><br>
+                    <p style="line-height:1.6; margin-bottom:20px;">${story.text}</p>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-primary" onclick="addToFav(${story.id})">إضافة للمفضلة</button>
+                        <button class="btn-submit" onclick="markAsRead(${story.id})">تم القراءة</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function addToFav(id) {
+            let story = appData.stories.find(s => s.id === id);
+            if(!appData.currentUser.favorites.includes(story)) {
+                appData.currentUser.favorites.push(story);
+                alert("تمت الإضافة للمفضلة بنجاح!");
+            }
+        }
+
+        function markAsRead(id) {
+            let story = appData.stories.find(s => s.id === id);
+            if(!appData.currentUser.read.includes(story)) {
+                appData.currentUser.read.push(story);
+                alert("تم تسجيل القصة في قائمة (تم قراءتها)!");
+            }
+        }
+
+        function openNotifications() {
+            alert("لا توجد إشعارات جديدة حالياً.");
+        }
+
+        function openFriends() {
+            alert("قائمة الأصدقاء فارغة حالياً.");
+        }
+
+        function closeModal() {
+            document.getElementById('globalModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
