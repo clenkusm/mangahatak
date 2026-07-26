@@ -145,7 +145,7 @@
                 following: [], 
                 read: [], 
                 friendRequests: {},
-                customLists: [] // قوائم المستخدم الخاصة
+                customLists: []
             },
             stories: [],
             lists: [],
@@ -155,26 +155,51 @@
                 { name: "أحمد محمد", image: "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?w=100", status: "متاح" },
                 { name: "محمود علي", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100", status: "مشغول" },
                 { name: "سارة خالد", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100", status: "تكتب رواية" }
-            ]
+            ],
+            isDarkMode: false
         };
 
+        function saveToLocalStorage() {
+            localStorage.setItem('mangahat_data', JSON.stringify(appData));
+        }
+
+        function loadFromLocalStorage() {
+            let saved = localStorage.getItem('mangahat_data');
+            if(saved) {
+                try {
+                    appData = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Error loading saved data", e);
+                }
+            }
+        }
+
         window.onload = function() {
+            loadFromLocalStorage();
+            if(appData.isDarkMode) {
+                document.body.classList.add('dark-mode');
+                const btn = document.getElementById('themeToggleBtn');
+                if(btn) btn.innerHTML = '<span>☀️</span> الوضع الفاتح';
+            }
             renderHome();
         };
 
         function addNotification(text) {
             appData.notifications.unshift({ id: Date.now(), text: text, read: false });
             updateNotifBadge();
+            saveToLocalStorage();
         }
 
         function updateNotifBadge() {
             let unread = appData.notifications.filter(n => !n.read).length;
-            document.getElementById('notifCount').innerText = `(${unread})`;
+            const badge = document.getElementById('notifCount');
+            if(badge) badge.innerText = `(${unread})`;
         }
 
         function openNotificationsModal() {
             appData.notifications.forEach(n => n.read = true);
             updateNotifBadge();
+            saveToLocalStorage();
             const modal = document.getElementById('globalModal');
             const body = document.getElementById('modalBody');
             modal.style.display = 'flex';
@@ -195,8 +220,10 @@
         function toggleDarkMode() {
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
+            appData.isDarkMode = isDark;
             const btn = document.getElementById('themeToggleBtn');
             btn.innerHTML = isDark ? '<span>☀️</span> الوضع الفاتح' : '<span>🌙</span> الوضع المظلم';
+            saveToLocalStorage();
         }
 
         function switchPage(pageName, element) {
@@ -212,6 +239,7 @@
         }
 
         function renderHome() {
+            updateNotifBadge();
             const view = document.getElementById('mainView');
             view.innerHTML = `
                 <div class="hero">
@@ -324,6 +352,7 @@
                 }
             }
 
+            saveToLocalStorage();
             alert("✅ تم نشر القصة بنجاح!");
             switchPage('home');
         }
@@ -502,6 +531,7 @@
                 storyIds: storyIds
             });
 
+            saveToLocalStorage();
             alert("✅ تم إنشاء الليست بنجاح!");
             closeModal();
             showAccountTab('customLists');
@@ -511,6 +541,7 @@
             if(confirm("هل أنت متأكد من مسح هذه القصة؟")) {
                 appData.stories = appData.stories.filter(s => s.id !== id);
                 appData.currentUser.stories = appData.currentUser.stories.filter(s => s.id !== id);
+                saveToLocalStorage();
                 renderAccount();
             }
         }
@@ -551,6 +582,7 @@
             story.text = document.getElementById('editStText').value;
             story.category = document.getElementById('editStCat').value;
 
+            saveToLocalStorage();
             alert("✅ تم تعديل القصة بنجاح!");
             closeModal();
             renderAccount();
@@ -574,6 +606,7 @@
             let img = document.getElementById('newImg').value;
             appData.currentUser.name = name;
             appData.currentUser.image = img;
+            saveToLocalStorage();
             closeModal();
             renderAccount();
         }
@@ -657,6 +690,7 @@
             checkboxes.forEach(cb => members.push(cb.value));
 
             appData.chats.push({ name: name, type: 'group', messages: [], members: members });
+            saveToLocalStorage();
             closeModal();
             renderChat();
         }
@@ -665,6 +699,7 @@
             if(currentActiveChat === "المجموعة العامة") return;
             if(confirm("هل أنت متأكد من الخروج من هذه المجموعة؟")) {
                 appData.chats = appData.chats.filter(c => c.name !== currentActiveChat);
+                saveToLocalStorage();
                 openChat("المجموعة العامة");
                 loadCustomGroups();
             }
@@ -691,6 +726,7 @@
             if(chat) {
                 chat.messages.push({ sender: appData.currentUser.name, text: text });
                 document.getElementById('msgInput').value = "";
+                saveToLocalStorage();
                 loadChatMessages(currentActiveChat);
             }
         }
@@ -699,6 +735,7 @@
             let chat = appData.chats.find(c => c.name === chatName);
             if(chat) {
                 chat.messages.splice(index, 1);
+                saveToLocalStorage();
                 loadChatMessages(chatName);
             }
         }
@@ -709,6 +746,7 @@
                 let newText = prompt("تعديل الرسالة:", chat.messages[index].text);
                 if(newText !== null) {
                     chat.messages[index].text = newText;
+                    saveToLocalStorage();
                     loadChatMessages(chatName);
                 }
             }
@@ -836,6 +874,7 @@
                     addNotification(`قام ${appData.currentUser.name} بالإعجاب بقصتك "${story.title}"`);
                 }
             }
+            saveToLocalStorage();
             openStoryDetail(id);
         }
 
@@ -853,6 +892,7 @@
                     story.likes--;
                 }
             }
+            saveToLocalStorage();
             openStoryDetail(id);
         }
 
@@ -866,6 +906,7 @@
             if(story.author !== appData.currentUser.name) {
                 addNotification(`قام ${appData.currentUser.name} بالتعليق على قصتك "${story.title}"`);
             }
+            saveToLocalStorage();
             openStoryDetail(id);
         }
 
@@ -890,6 +931,7 @@
         function rateStory(id, val) {
             let story = appData.stories.find(s => s.id === id);
             story.stars = parseFloat(((story.stars + val) / 2).toFixed(1));
+            saveToLocalStorage();
             alert(`✅ تم تسجيل تقييمك (${val} نجوم) بنجاح!`);
             closeModal();
             openStoryDetail(id);
@@ -906,6 +948,7 @@
                 appData.currentUser.favorites.push(story);
                 btn.innerText = '⭐ تم (المفضلة)';
             }
+            saveToLocalStorage();
         }
 
         function toggleRead(id) {
@@ -921,6 +964,7 @@
                 let uncIdx = appData.currentUser.uncompleted.findIndex(s => s.id === id);
                 if(uncIdx > -1) appData.currentUser.uncompleted.splice(uncIdx, 1);
             }
+            saveToLocalStorage();
         }
 
         function openUserProfile(authorName) {
@@ -967,6 +1011,7 @@
             } else if(reqStatus === 'sent') {
                 alert("⏳ تم إرسال الطلب مسبقاً في انتظار القبول.");
             }
+            saveToLocalStorage();
             openUserProfile(authorName);
         }
 
@@ -974,6 +1019,7 @@
             if(confirm(`هل تريد إزالة ${authorName} من الأصدقاء؟`)) {
                 appData.currentUser.friends = appData.currentUser.friends.filter(f => f !== authorName);
                 delete appData.currentUser.friendRequests[authorName];
+                saveToLocalStorage();
                 alert("✅ تم إزالة الصديق بنجاح.");
                 closeModal();
             }
