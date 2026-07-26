@@ -6,9 +6,8 @@
     <title>مانجاهاتك - المنصة الشاملة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        /* === المتغيرات (الوضع الفاتح والداكن) === */
         :root {
-            --primary-color: #e74c3c; /* اللون الأحمر بدلاً من الأزرق */
+            --primary-color: #e74c3c;
             --primary-hover: #c0392b;
             --bg-color: #f4f6f9;
             --sidebar-bg: #1e272e;
@@ -31,7 +30,6 @@
             --shadow: 0 4px 6px rgba(255,255,255,0.02);
         }
 
-        /* === الأساسيات === */
         * {
             margin: 0;
             padding: 0;
@@ -47,7 +45,6 @@
             overflow-x: hidden;
         }
 
-        /* === الشريط الجانبي (Sidebar) === */
         .sidebar {
             width: 260px;
             background-color: var(--sidebar-bg);
@@ -68,7 +65,7 @@
             font-weight: 700;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
-            color: var(--primary-color); /* لوجو أحمر */
+            color: var(--primary-color);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -104,7 +101,6 @@
             font-family: inherit;
         }
 
-        /* === المحتوى الرئيسي === */
         .main-content {
             margin-right: 260px;
             flex-grow: 1;
@@ -114,7 +110,6 @@
             width: calc(100% - 260px);
         }
 
-        /* === الشريط العلوي === */
         .topbar {
             background-color: var(--card-bg);
             padding: 15px 30px;
@@ -144,7 +139,6 @@
             color: var(--text-main);
         }
 
-        /* === الصفحات === */
         .page {
             display: none;
             padding: 30px;
@@ -155,7 +149,6 @@
         }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* === عناصر الواجهة === */
         .hero-banner {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
             color: white;
@@ -180,7 +173,7 @@
             text-align: center;
             box-shadow: var(--shadow);
             border: 1px solid var(--border-color);
-            cursor: pointer;
+            position: relative;
             transition: var(--transition);
         }
 
@@ -190,7 +183,7 @@
             background-color: var(--primary-color);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 8px 15px;
             border-radius: 6px;
             cursor: pointer;
             font-family: inherit;
@@ -200,7 +193,65 @@
         .btn-danger { background-color: #e74c3c; }
         .btn-secondary { background-color: var(--text-muted); }
 
-        /* === نظام التعليقات === */
+        /* تنسيق الثلاث نقاط والقائمة المنسدلة */
+        .menu-container {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        .options-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-main);
+            padding: 5px;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 35px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            border-radius: 6px;
+            z-index: 100;
+            min-width: 140px;
+            text-align: right;
+        }
+        .dropdown-menu button {
+            width: 100%;
+            background: none;
+            border: none;
+            padding: 10px;
+            text-align: right;
+            cursor: pointer;
+            color: var(--text-main);
+            font-family: inherit;
+        }
+        .dropdown-menu button:hover {
+            background-color: var(--bg-color);
+        }
+
+        /* زر الخروج من المجموعة العلوي */
+        .group-card {
+            text-align: right !important;
+            padding-top: 40px !important;
+        }
+        .leave-group-top-btn {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
         .comments-section {
             margin-top: 30px;
             background: var(--card-bg);
@@ -223,27 +274,16 @@
             color: var(--text-main);
         }
 
-        /* === التجاوب مع الهواتف (Responsive) === */
         @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-right: 0;
-                width: 100%;
-            }
-            .mobile-toggle {
-                display: block;
-            }
+            .sidebar { transform: translateX(100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-right: 0; width: 100%; }
+            .mobile-toggle { display: block; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الشريط الجانبي -->
     <aside class="sidebar" id="sidebar">
         <div class="logo">
             <span>📖</span> مانجاهاتك
@@ -257,9 +297,7 @@
         <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 التبديل للوضع الليلي</button>
     </aside>
 
-    <!-- المحتوى الرئيسي -->
     <main class="main-content">
-        <!-- الشريط العلوي -->
         <header class="topbar">
             <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
             <div class="topbar-actions">
@@ -268,7 +306,6 @@
             </div>
         </header>
 
-        <!-- صفحة الرئيسية -->
         <section id="home-page" class="page active">
             <div class="hero-banner">
                 <h1>أهلاً بك في مانجاهاتك</h1>
@@ -285,42 +322,33 @@
                     <p>استكشف العناوين المختلفة</p>
                 </div>
                 <div class="card">
-                    <!-- تم استبدال البرتقالي (الريشة/اليد) بإيموجي كتاب -->
                     <h3>📖 أنشئ كتابك الخاص</h3> 
                     <p>شارك إبداعك مع العالم</p>
                 </div>
             </div>
             
             <h2 style="margin-bottom: 15px;">القصص المتاحة (مثال للتعليقات)</h2>
-            <div class="card" onclick="openStory(1)">
+            <div class="card" onclick="openStory(1)" style="text-align: right;">
                 <h3>مغامرة في العالم الموازي</h3>
                 <p>بواسطة: أحمد | اضغط لفتح القصة والتعليقات</p>
             </div>
         </section>
 
-        <!-- صفحة البحث -->
         <section id="search-page" class="page">
             <h2>ابحث عن القصص</h2>
             <p>قريباً...</p>
         </section>
 
-        <!-- صفحة المستخدمين (نظام الصداقة) -->
         <section id="users-page" class="page">
             <h2>المستخدمين</h2>
-            <div id="users-list" class="cards-grid" style="margin-top: 20px;">
-                <!-- سيتم ملؤها بالجافاسكريبت -->
-            </div>
+            <div id="users-list" class="cards-grid" style="margin-top: 20px;"></div>
         </section>
 
-        <!-- صفحة المحادثات -->
         <section id="chats-page" class="page">
             <h2>المحادثات والمجموعات</h2>
-            <div id="chats-list" class="cards-grid" style="margin-top: 20px;">
-                <!-- سيتم ملؤها بالجافاسكريبت -->
-            </div>
+            <div id="chats-list" class="cards-grid" style="margin-top: 20px;"></div>
         </section>
 
-        <!-- صفحة عرض القصة والتعليقات -->
         <section id="story-page" class="page">
             <button class="btn btn-secondary" onclick="switchPage('home')">🔙 عودة</button>
             <h2 id="story-title" style="margin-top: 20px;"></h2>
@@ -333,20 +361,16 @@
                 <button class="btn" style="margin-top: 10px;" onclick="addComment()">إرسال التعليق</button>
             </div>
         </section>
-
     </main>
 
     <script>
-        // ==========================================
-        // 1. إدارة البيانات (Local Storage Persistence)
-        // ==========================================
         const defaultData = {
             currentUser: { id: 1, name: 'أنت (المستخدم الحالي)' },
             users: [
                 { id: 2, name: 'أحمد' },
                 { id: 3, name: 'سارة' }
             ],
-            friendRequests: [], // [{from: 1, to: 2, status: 'pending' | 'accepted' | 'rejected'}]
+            friendRequests: [],
             stories: [
                 { 
                     id: 1, 
@@ -360,56 +384,38 @@
             ]
         };
 
-        // استرجاع البيانات من المتصفح أو استخدام الافتراضية
         let appData = JSON.parse(localStorage.getItem('mangahatakData')) || defaultData;
 
-        // دالة لحفظ أي تغييرات تحدث في النظام
         function saveData() {
             localStorage.setItem('mangahatakData', JSON.stringify(appData));
         }
 
-
-        // ==========================================
-        // 2. واجهة المستخدم والتنقل
-        // ==========================================
         function switchPage(pageId, navElement = null) {
-            // إخفاء كل الصفحات
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // إظهار الصفحة المطلوبة
             document.getElementById(pageId + '-page').classList.add('active');
 
-            // تحديث الشريط الجانبي
             if(navElement) {
                 document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
                 navElement.classList.add('active');
             }
 
-            // دوال خاصة تعمل عند فتح صفحات معينة
             if(pageId === 'users') renderUsers();
             if(pageId === 'chats') renderChats();
         }
 
-        // الشريط الجانبي في الهواتف
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('open');
         }
 
-        // الوضع الليلي
         function toggleDarkMode() {
             const body = document.body;
             body.classList.toggle('dark-mode');
-            // حفظ تفضيل المستخدم
             localStorage.setItem('darkMode', body.classList.contains('dark-mode'));
         }
-        // استعادة الوضع الليلي عند التحميل
         if(localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
         }
 
-
-        // ==========================================
-        // 3. نظام طلبات الصداقة الذكي
-        // ==========================================
         function renderUsers() {
             const container = document.getElementById('users-list');
             container.innerHTML = '';
@@ -417,49 +423,57 @@
             appData.users.forEach(user => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                card.style.textAlign = 'right';
                 card.innerHTML = `<h3>👤 ${user.name}</h3>`;
                 
-                // البحث عن حالة الصداقة
                 let request = appData.friendRequests.find(r => 
                     (r.from === appData.currentUser.id && r.to === user.id) || 
                     (r.from === user.id && r.to === appData.currentUser.id)
                 );
 
-                const btn = document.createElement('button');
-                btn.className = 'btn';
-                btn.style.marginTop = '15px';
+                // قائمة الثلاث نقاط
+                const menuContainer = document.createElement('div');
+                menuContainer.className = 'menu-container';
+
+                const optionsBtn = document.createElement('button');
+                optionsBtn.className = 'options-btn';
+                optionsBtn.innerHTML = '⋮';
+                optionsBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    const menu = menuContainer.querySelector('.dropdown-menu');
+                    document.querySelectorAll('.dropdown-menu').forEach(m => { if(m !== menu) m.style.display = 'none'; });
+                    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+                };
+
+                const dropdownMenu = document.createElement('div');
+                dropdownMenu.className = 'dropdown-menu';
+
+                const actionBtn = document.createElement('button');
 
                 if (!request || request.status === 'rejected') {
-                    // لم يتم الإرسال أو تم الرفض -> زر "إضافة صديق"
-                    btn.innerText = '➕ إضافة صديق';
-                    btn.onclick = () => handleFriendAction(user.id, 'add');
+                    actionBtn.innerText = '➕ إضافة صديق';
+                    actionBtn.onclick = () => handleFriendAction(user.id, 'add');
                 } else if (request.status === 'pending') {
-                    // قيد الانتظار
-                    btn.innerText = '⏳ تم الارسال';
-                    btn.className = 'btn btn-secondary';
-                    btn.onclick = () => handleFriendAction(user.id, 'pending_alert');
+                    actionBtn.innerText = '⏳ تم الارسال';
+                    actionBtn.onclick = () => handleFriendAction(user.id, 'pending_alert');
                 } else if (request.status === 'accepted') {
-                    // أصدقاء بالفعل -> زر "إزالة صديق"
-                    btn.innerText = '❌ إزالة صديق';
-                    btn.className = 'btn btn-danger';
-                    btn.onclick = () => handleFriendAction(user.id, 'remove');
+                    actionBtn.innerText = '❌ إزالة صديق';
+                    actionBtn.onclick = () => handleFriendAction(user.id, 'remove');
                 }
 
-                card.appendChild(btn);
-                
-                // زر تجريبي لمحاكاة رفض الطلب من الطرف الآخر (لغرض التجربة فقط)
-                if(request && request.status === 'pending') {
-                    const mockRejectBtn = document.createElement('button');
-                    mockRejectBtn.innerText = 'تجربة: رفض الطرف الآخر';
-                    mockRejectBtn.className = 'btn btn-danger';
-                    mockRejectBtn.style.marginTop = '5px';
-                    mockRejectBtn.onclick = () => { request.status = 'rejected'; saveData(); renderUsers(); };
-                    card.appendChild(mockRejectBtn);
-                }
+                dropdownMenu.appendChild(actionBtn);
+                menuContainer.appendChild(optionsBtn);
+                menuContainer.appendChild(dropdownMenu);
+                card.appendChild(menuContainer);
 
                 container.appendChild(card);
             });
         }
+
+        // إغلاق القوائم عند الضغط خارجها
+        window.onclick = function() {
+            document.querySelectorAll('.dropdown-menu').forEach(m => m.style.display = 'none');
+        };
 
         function handleFriendAction(targetUserId, actionType) {
             let requestIndex = appData.friendRequests.findIndex(r => 
@@ -469,11 +483,9 @@
 
             if (actionType === 'add') {
                 if (requestIndex > -1) {
-                    // كان مرفوضاً وسنعيد إرساله
                     appData.friendRequests[requestIndex].status = 'pending';
                     appData.friendRequests[requestIndex].from = appData.currentUser.id; 
                 } else {
-                    // طلب جديد
                     appData.friendRequests.push({ from: appData.currentUser.id, to: targetUserId, status: 'pending' });
                 }
                 alert('تم إرسال طلب الصداقة.');
@@ -489,29 +501,23 @@
             }
             
             saveData();
-            renderUsers(); // تحديث الواجهة فوراً
+            renderUsers();
         }
 
-
-        // ==========================================
-        // 4. نظام المجموعات (الخروج من المجموعة)
-        // ==========================================
         function renderChats() {
             const container = document.getElementById('chats-list');
             container.innerHTML = '';
 
             appData.chats.forEach(chat => {
-                // التأكد أن المستخدم ضمن أعضاء المجموعة
                 if (chat.members.includes(appData.currentUser.id)) {
                     const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `<h3>🗣️ ${chat.name}</h3><p>عدد الأعضاء: ${chat.members.length}</p>`;
+                    card.className = 'card group-card';
+                    card.innerHTML = `<h3>🗣️ ${chat.name}</h3><p style="margin-top: 5px;">عدد الأعضاء: ${chat.members.length}</p>`;
                     
                     if (chat.isGroup) {
                         const leaveBtn = document.createElement('button');
-                        leaveBtn.className = 'btn btn-danger';
-                        leaveBtn.style.marginTop = '15px';
-                        leaveBtn.innerText = '🚪 مغادرة المجموعة';
+                        leaveBtn.className = 'leave-group-top-btn';
+                        leaveBtn.innerText = 'خروج';
                         leaveBtn.onclick = () => leaveGroup(chat.id);
                         card.appendChild(leaveBtn);
                     }
@@ -524,19 +530,14 @@
             if(confirm('هل تريد حقاً مغادرة هذه المجموعة؟')) {
                 let group = appData.chats.find(c => c.id === groupId);
                 if (group) {
-                    // إزالة الـ ID الخاص بالمستخدم الحالي من مصفوفة الأعضاء
                     group.members = group.members.filter(memberId => memberId !== appData.currentUser.id);
                     alert('تمت مغادرة المجموعة بنجاح.');
                     saveData();
-                    renderChats(); // تحديث القائمة
+                    renderChats();
                 }
             }
         }
 
-
-        // ==========================================
-        // 5. نظام التعليقات (Stories & Comments)
-        // ==========================================
         let currentOpenStoryId = null;
 
         function openStory(storyId) {
@@ -559,6 +560,7 @@
             story.comments.forEach(comment => {
                 const div = document.createElement('div');
                 div.className = 'comment';
+                div.style.textAlign = 'right';
                 div.innerHTML = `<strong>${comment.sender}:</strong> ${comment.text}`;
                 container.appendChild(div);
             });
@@ -576,7 +578,6 @@
             saveData();
             renderComments();
         }
-
     </script>
 </body>
 </html>
